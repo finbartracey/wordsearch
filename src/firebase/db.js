@@ -38,3 +38,8 @@ export const doAddLink = ( title, link) =>
   });
   export const onceGetLinks = () =>
   db.ref('links').once('value');
+  export const onceListGames = () =>
+  db.ref(`games`).once('value');
+  export const onceGetWords = (id) =>
+  db.ref(`games/${id}/words`).once('value');
+  

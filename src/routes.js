@@ -1,8 +1,11 @@
 // routes.js
 
 import React from 'react';
-import { Router, Route } from 'react-router';
 
+import {
+  BrowserRouter as Router,
+  Route,
+} from 'react-router-dom';
 import App from './components/App';
 
 const Routes = (props) => (

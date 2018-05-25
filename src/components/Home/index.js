@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { withRouter } from 'react-router-dom';
 import withAuthorization from '../Session/withAuthorization';
 import { db } from '../../firebase';
 import Grid from '../grid';
@@ -10,36 +10,44 @@ class HomePage extends Component {
 
     this.state = {
       users: {},
-      words:[]
+      words:[],
+     // game:props.match.params.game,
     };
+    console.log('props',props)
     this.strikeoutWord = this.strikeoutWord.bind(this);
   }
   strikeoutWord(selectedLetters){
     console.log('selectedLetters',selectedLetters)
     let words = [...this.state.words];
-let index = words.findIndex(el => el.name === selectedLetters);
+let index = words.findIndex(el => el.name.toUpperCase() === selectedLetters.toUpperCase());
 words[index] = {...words[index], active: false};
 this.setState({ words });
  
   }
-
+  componentDidUpdate ({ params, location }) {
+    console.log(params,location)
+  }
   componentDidMount() {
     db.onceGetUsers().then(snapshot =>
       this.setState(() => ({ users: snapshot.val()}))
     );
+    console.log('----',this.props.match.params.game)
+     db.onceGetWords(this.props.match.params.game).then(snapshot =>{
+      var returnArr = [];
 
+    snapshot.forEach(function(childSnapshot) {
+        var item = childSnapshot.val();
+        returnArr.push({name:item,active:true});
+    });
+      this.setState(() => (
+        { words: returnArr}))
+     });
   }
   componentWillMount() {
-   
-    this.setState(() => ({  words: [
-      {name:'MAEBH', active:true},
-      {name:'ORLAITH', active:true},
-      {name:'AOIFE', active:true},
-      {name:'CAROLINE', active:true},
-      {name:'FINBAR', active:true}
-       ]}))
+
   }
   render() {
+    
     const { users,words } = this.state;
 const strikeoutWord = this.strikeoutWord;
     return (
@@ -48,8 +56,9 @@ const strikeoutWord = this.strikeoutWord;
         <p>The Home Page is accessible by every signed in user.</p>
 
         { !!users && <UserList users={users} /> }
-        <WordList words = {words}></WordList>
-        <Grid words = {words} strikeoutWord = {this.strikeoutWord}></Grid>
+        
+        { !!words.length>0 && <WordList words = {words}></WordList>}
+        { !!words.length>0 &&<Grid words = {words} strikeoutWord = {this.strikeoutWord}></Grid>}
       </div>
     );
   }
@@ -68,6 +77,5 @@ const UserList = ({ users }) =>
 
   </div>
 
-const authCondition = (authUser) => !!authUser;
 
-export default withAuthorization(authCondition)(HomePage);
+export default withRouter(HomePage);
