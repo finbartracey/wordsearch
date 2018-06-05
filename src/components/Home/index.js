@@ -58,7 +58,7 @@ const strikeoutWord = this.strikeoutWord;
         { !!users && <UserList users={users} /> }
         
         { !!words.length>0 && <WordList words = {words}></WordList>}
-        { !!words.length>0 &&<Grid words = {words} strikeoutWord = {this.strikeoutWord}></Grid>}
+        { !!words.length>0 &&<Grid words = {words} gameKey={this.props.match.params.game} strikeoutWord = {this.strikeoutWord}></Grid>}
       </div>
     );
   }

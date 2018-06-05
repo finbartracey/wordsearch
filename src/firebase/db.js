@@ -33,6 +33,7 @@ export const doAddLink = ( title, link) =>
   db.ref(`games/`).push({
     'uid': auth.currentUser.uid,
     title,
+  //  'username':auth.currentUser.username,
     words,
     'created': utils.ServerValue.TIMESTAMP
   });
@@ -42,4 +43,10 @@ export const doAddLink = ( title, link) =>
   db.ref(`games`).once('value');
   export const onceGetWords = (id) =>
   db.ref(`games/${id}/words`).once('value');
-  
+  export const doGameComplete = ( gameId,time) =>
+  db.ref(`gamesComplete/`).push({
+    'uid': auth.currentUser.uid,
+    gameId,
+    time,
+    'created': utils.ServerValue.TIMESTAMP
+  });

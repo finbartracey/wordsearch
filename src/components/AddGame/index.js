@@ -12,7 +12,7 @@ const AddGame = ({ history }) =>
     {authUser =>
       <div>
        
-       add words here {authUser.uid}
+        add words here {authUser.uid} 
        <AddLinkForm history={history}/>
       </div>
     }

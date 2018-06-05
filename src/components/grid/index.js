@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import d3 from '../d3';
-
+import { db } from '../../firebase';
 
 
 
@@ -11,6 +11,7 @@ class Grid extends Component {
        this.state = {
         properties: { boxSize: 50 },
         startTime: Date.now(),
+        gameKey:this.props.gameKey,
         words:this.props.words.map(function(x){ return x.name.toUpperCase() }),
       //  words: ['Maebh', 'Orlaith', 'Aoife','Caroline','finbar'].map(function(x){ return x.toUpperCase() }),
         properties : { boxSize: 50 },
@@ -257,6 +258,15 @@ checkResult(path, gridData) {
             if (words.length===0){
                 let totalTime=Math.floor((Date.now()-startTime)/1000)
                 console.log('finished, you took '+ totalTime+ " seconds")
+                db.doGameComplete(this.state.gameKey,totalTime)
+                .then(() => {
+                    console.log('finished, you took '+ totalTime+ " seconds")
+                })
+                .catch(error => {
+                    console.log('err')
+                });
+
+
             //    $('#totalTime').text(totalTime)
             //    $('#myModal').modal('show');
             }
@@ -277,8 +287,6 @@ checkResult(path, gridData) {
     //     .attr("class", "tooltip")
     //     .style("opacity", 0);
   draw(selection, gridData) {
-      var that=this;
-      console.log('that',this)
         var div = d3.select("body").append("div")
          .attr("class", "tooltip")
          .style("opacity", 0);
@@ -302,6 +310,7 @@ checkResult(path, gridData) {
                 div.html(function () {
                     return that.getLetters(path, gridData)
                 })
+                
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 60) + "px");
     
@@ -405,7 +414,9 @@ checkResult(path, gridData) {
             .attr("height", function (d) { return d.height; })
             .style("fill", "#fff")
             .style("stroke", "#222")
-    
+            .on("mouseover", function (d) {
+                d3.select(this).style("fill", "red");
+            })
     
     
         var text = row.selectAll(".text")
